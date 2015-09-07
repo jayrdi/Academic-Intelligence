@@ -77,9 +77,6 @@ class RestWrapper {
 	        };
 	    };
 
-	    // save data to object
-	    // $this->projects = $projects;
-
 	    // need to replace single quotes to avoid char escape
 	    for ($i = 0; $i < count($this->projects); $i++) {
 	        $this->projects[$i]['author'] = str_replace("'", "", $this->projects[$i]['author']);
@@ -161,6 +158,14 @@ class RestWrapper {
 	        $this->twoArrayFunds[$i]['funds'] = ($this->twoArrayFunds[$i]['funds']/1000000);
 	    }  
 	}
+
+	public function orderData($arrayData, $arrayType, $sortBy) {
+        // sort array according to $sortBy
+        // make sure that data is sorted correctly (value, high -> low)
+        usort($this->$arrayType, function ($a, $b) use ($sortBy){
+            return $b[$sortBy] - $a[$sortBy];
+        });
+    }
 }
 
 ?>

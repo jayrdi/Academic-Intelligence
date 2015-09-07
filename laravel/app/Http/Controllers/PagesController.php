@@ -10,6 +10,8 @@ use App\Models\RestWrapper;
 use App\Models\DataSort;
 use App\Models\BubbleChartCompatible;
 use DB;
+use View;
+use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class PagesController extends Controller {
 
@@ -30,11 +32,13 @@ class PagesController extends Controller {
 		return view('pages.about');
 	}
 
+	// method about returns view 'throttle' (resources/views/throttle.blade.php)
 	public function throttleError()
 	{
 		return view('pages.throttle');
 	}
 
+	// method about returns view 'norecords' (resources/views/norecords.blade.php)
 	public function noRecordsError()
 	{
 		return view('pages.norecords');
@@ -237,13 +241,15 @@ class PagesController extends Controller {
 		// separate the data into the different arrays for time periods
 		$rest->timedFunds($timeStart, $timeEnd);
 
+		// sort the data by funds
+		$rest->orderData($rest, 'projects', 'funds');
+		$rest->orderData($rest, 'timeArrayFunds', 'funds');
+		$rest->orderData($rest, 'tenArrayFunds', 'funds');
+		$rest->orderData($rest, 'fiveArrayFunds', 'funds');
+		$rest->orderData($rest, 'twoArrayFunds', 'funds');
+
 		// make the funds more readable as they are generally in the millions
 		$rest->readableFunds();
-
-		// echo "</br>GtR DATA: </br>";
-		// print "<pre>\n";
-		// print_r($rest);
-		// print "</pre>";
 
 		// create a new DataSort object to store all the data for the various graphs
 		$rawData = new DataSort($soap->records);
@@ -258,49 +264,33 @@ class PagesController extends Controller {
 		$rawData->populateTables($rawData->records, $timeStart, $timeEnd);
 
 		// sum the citations values in all the tables for duplicate authors
-		$rawData->sumCites();
+		$rawData->sumCitesAll();
+		// sum the weighted values in all the tables for duplicate authors
+		$rawData->sumValuesAll();
+		$rawData->sumCitesUser();
+		$rawData->sumValuesUser();
+		$rawData->sumCitesTen();
+		$rawData->sumValuesTen();
+		$rawData->sumCitesFive();
+		$rawData->sumValuesFive();
+		$rawData->sumCitesTwo();
+		$rawData->sumValuesTwo();
 
-		// return processed data back from MySQL to PHP arrays
-		$topCited = $rawData->pullData('searchresponse');
-		$topCitedYears = $rawData->pullData('userdefined');
-		$topCitedTen = $rawData->pullData('tenyear');
-		$topCitedFive = $rawData->pullData('fiveyear');
-		$topCitedTwo = $rawData->pullData('twoyear');
+		// return processed data back from MySQL to PHP arrays & convert to associative arrays
+		$rawData->allArray = json_decode(json_encode($rawData->pullData('searchresponse')), true);
+		$rawData->timeArray = json_decode(json_encode($rawData->pullData('userdefined')), true);
+		$rawData->tenArray = json_decode(json_encode($rawData->pullData('tenyear')), true);
+		$rawData->fiveArray = json_decode(json_encode($rawData->pullData('fiveyear')), true);
+		$rawData->twoArray = json_decode(json_encode($rawData->pullData('twoyear')), true);
+		$rawData->valueArray = json_decode(json_encode($rawData->pullData('searchresponse')), true);
 
-		echo "</br>TOPCITED ARRAY: </br>";
-		print "<pre>\n";
-		print_r($topCited);
-		print "</pre>";
-
-		// sort data by publication year so that remaining publications after
-        // removing duplicates is the most recent
-		// $rawData->sortData($rawData->records, 'records', 'pubyear');
-
-		// remove duplicate authors
-		// $rawData->removeDuplicates();
-
-		// pull out seperate data arrays for various time spans
-		// pass in dates from form
-		// $rawData->timeSpan(($soap->data['queryParameters']['timeSpan']['begin']), ($soap->data['queryParameters']['timeSpan']['end']));
-
-		$rawData->valueArray = array_merge([], $rawData->records);
-
-		// sort arrays according to citations
-		/* $topCited->sortData($topCited, 'records', 'citations');
-		$topCitedYears->sortData($topCitedYears, 'timeArray', 'citations');
-		$topCitedTen->sortData($topCitedTen, 'tenArray', 'citations');
-		$topCitedFive->sortData($topCitedFive, 'fiveArray', 'citations');
-		$topCitedTwo->sortData($topCitedTwo, 'twoArray', 'citations'); */
-		// sort values array according to values
-		$rawData->sortData($rawData->valueArray, 'valueArray', 'values');
-
-		// only include first ten elements in array
-	    // $rawData->records = array_slice($rawData->records, 0, 10);
-	    // $rawData->timeArray = array_slice($rawData->timeArray, 0, 10);
-	    // $rawData->tenArray = array_slice($rawData->tenArray, 0, 10);
-	    // $rawData->fiveArray = array_slice($rawData->fiveArray, 0, 10);
-	    //$rawData->twoArray = array_slice($rawData->twoArray, 0, 10);
-	    // $rawData->valueArray = array_slice($rawData->valueArray, 0, 10);
+		// sort data by highest cited first
+		$rawData->sortData($rawData, 'allArray', 'citations');
+		$rawData->sortData($rawData, 'timeArray', 'citations');
+		$rawData->sortData($rawData, 'tenArray', 'citations');
+		$rawData->sortData($rawData, 'fiveArray', 'citations');
+		$rawData->sortData($rawData, 'twoArray', 'citations');
+		$rawData->sortData($rawData, 'valueArray', 'weight');
 
 	    // sort value data so that it only has 2 values for bubble chart (author & value)
 	    $rawData->removeAttributes($rawData->valueArray);
@@ -310,14 +300,39 @@ class PagesController extends Controller {
 	    $rawData->valuesJSON["name"] = "rankedData";
 	    $rawData->valuesJSON["children"] = $rawData->valueArray;
 
-	    $finalData = json_encode($rawData);
+	    // JSON encode cited data for use in jQuery
+	    $allCited = json_encode($rawData->allArray);
+	    $userCited = json_encode($rawData->timeArray);
+	    $tenCited = json_encode($rawData->tenArray);
+	    $fiveCited = json_encode($rawData->fiveArray);
+	    $twoCited = json_encode($rawData->twoArray);
 
-		/* echo "</br>DATA: </br>";
-		print "<pre>\n";
-		print_r($rawData);
-		print "</pre>"; */
+	    // JSON encode values data for use in jQuery
+	    $valueData = json_encode($rawData->valuesJSON);
 
-		return view('pages.data')->with('data', $finalData);
+	    // JSON encode funds data for use in jQuery
+	    $allFunds = json_encode($rest->projects);
+	    $userFunds = json_encode($rest->timeArrayFunds);
+	    $tenFunds = json_encode($rest->tenArrayFunds);
+	    $fiveFunds = json_encode($rest->fiveArrayFunds);
+	    $twoFunds = json_encode($rest->twoArrayFunds);
+	    
+	    // pass data to JavaScript (uses https://github.com/laracasts/PHP-Vars-To-Js-Transformer)
+		JavaScript::put([
+						    'allCited' => $allCited,
+						    'userCited' => $userCited,
+						    'tenCited' => $tenCited,
+						    'fiveCited' => $fiveCited,
+						    'twoCited' => $twoCited,
+						    'valueData' => $valueData,
+						    'allFunded' => $allFunds,
+						    'userFunded' => $userFunds,
+						    'tenFunded' => $tenFunds,
+						    'fiveFunded' => $fiveFunds,
+						    'twoFunded' => $twoFunds,
+						    'searchData' => $searchParams
+						]);
+
+		return View::make('pages.data');
 	}
-
 }

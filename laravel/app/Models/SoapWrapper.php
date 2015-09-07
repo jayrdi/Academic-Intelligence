@@ -184,9 +184,9 @@ class SoapWrapper {
                 // create authors array for this REC data
                 $authors = [];
 
-                echo "<script type='text/javascript'>
-                          setRecord(" .$counter. ");
-                      </script>";
+                // echo "<script type='text/javascript'>
+                //           setRecord(" .$counter. ");
+                //       </script>";
 
                 ob_flush(); // flush anything from the header output buffer
                 flush(); // send contents so far to the browser

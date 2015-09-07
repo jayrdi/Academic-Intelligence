@@ -1,13 +1,13 @@
 #searchParams {
-	color: #fff !important;
+    color: #fff !important;
 }
 
 a:link, a:visited, a:hover, a:active {
-	text-decoration: none !important;
+    text-decoration: none !important;
 }
 
 #form {
-	font-family: 'Raleway' !important;
+    font-family: 'Raleway' !important;
 }
 
 /* default width too narrow */
@@ -233,4 +233,11 @@ a:link, a:visited, a:hover, a:active {
 #next2 {
     padding-left: 3px !important;
     float: right !important;
+}
+
+.indexer {
+    display: inline-block !important;
+    float: none !important;
+    margin-right: auto !important;
+    margin-left: 150px !important;
 }

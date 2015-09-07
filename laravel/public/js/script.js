@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
 
     // variables for journal form fields
@@ -15,26 +14,26 @@ $(document).ready(function() {
 
     // variable for year dropdown menu
     var dropOption = $(".yearChange"); // dropdown menu option
-    var year = new Date().getFullYear(); // get currrent year from system
+    var year = new Date().getFullYear(); // get current year from system
 
     ///////////////////////////
     /// JOURNAL FORM FIELDS ///
     ///////////////////////////
 
     // on add journal form field
-    $(add_buttonJ).click(function(e) {
+    add_buttonJ.click(function(e) {
 
         e.preventDefault();
         if (x < max_Jfields) {
             x++; // text box increment
 
             // add input box
-            $(wrapperJ).append('<div><input class="form-control" type="text" name="journal' + x + '"><a href="#" class="remove_field"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
+            wrapperJ.append('<div><input class="form-control" type="text" name="journal' + x + '"><a href="#" class="remove_field"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
         }
     });
 
     // on remove journal form field
-    $(wrapperJ).on("click", ".remove_field", function(e) {
+    wrapperJ.on("click", ".remove_field", function(e) {
 
         e.preventDefault();
         $(this).parent('').remove(); // remove parent form field
@@ -46,19 +45,19 @@ $(document).ready(function() {
     ///////////////////////////
 
     // on add title form field
-    $(add_buttonT).click(function(e) {
+    add_buttonT.click(function(e) {
 
         e.preventDefault();
         if (y < max_Tfields) {
             y++; // text box increment
 
             // add input box
-            $(wrapperT).append('<div><input class="form-control" type="text" name="title' + y + '"><a href="#" class="remove_field"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
+            wrapperT.append('<div><input class="form-control" type="text" name="title' + y + '"><a href="#" class="remove_field"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>');
         }
     });
 
     // on remove title form field
-    $(wrapperT).on("click", ".remove_field", function(e) {
+    wrapperT.on("click", ".remove_field", function(e) {
 
         e.preventDefault();
         $(this).parent('').remove(); // remove parent form field
@@ -103,5 +102,30 @@ $(document).ready(function() {
 
     // append the options to the select tags
     $('select').append(options);
+
+    ///////////////////////////
+    //// VARIOUS FUNCTIONS ////
+    ///////////////////////////
+
+    // function that will overwrite current record # in info panel for 'loading'
+    function setRecord(current) {
+        document.getElementById('progressPanel').innerHTML = "<strong>Loading record " + current + "</strong>";
+    };
+
+    // function to redirect to index page
+    function goBack() {
+        window.location.href = 'index.php';
+    };
+
+    // function to remove the info panel once page has loaded
+    function removePanel() {
+        var rem = document.getElementById('alertBox');
+        rem.remove();
+    };
+
+    // function to display 'processing' loadbar
+    function showLoadBar() {
+        $('#processing').show();
+    };
 
 })

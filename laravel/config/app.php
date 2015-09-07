@@ -147,6 +147,7 @@ return [
 		'App\Providers\RouteServiceProvider',
 		/* SOAP client package */
 		'Artisaninweb\SoapWrapper\ServiceProvider',
+		'Laracasts\Utilities\JavaScript\JavaScriptServiceProvider',
 	],
 
 	/*

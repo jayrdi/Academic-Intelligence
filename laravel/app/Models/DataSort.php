@@ -5,6 +5,8 @@ use Schema;
 
 class DataSort {
 
+    // create new array to store data from all years (after processing)
+    public $allArray = [];
     // create new array to store data from years
     // specified by user in Time Span in form input
     public $timeArray = [];
@@ -19,53 +21,55 @@ class DataSort {
         $this->records = $dataArray;
     }
 
-    // function to assign values to data for bubble chart
+    // function to assign weight to data for bubble chart
     public function assignValues() {
 
-        // iterate each element (publication) in $records and assign value
+        // iterate each element (publication) in $records and assign weight
         // according to citations vs publication date
         for ($i = 0; $i < count($this->records); $i++) {
             // check publication year against current year
             switch (date('Y')) {
                 case ($this->records[$i]['pubyear']) == (date('Y')):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 10);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 10);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-1):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 10);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 10);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-2):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 9);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 9);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-3):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 8);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 8);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-4):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 7);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 7);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-5):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 6);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 6);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-6):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 5);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 5);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-7):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 4);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 4);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-8):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 3);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 3);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-9):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 2);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 2);
                     break;
                 case ($this->records[$i]['pubyear']) == ((date('Y'))-10):
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 1);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 1);
                     break;
                 default:
-                    $this->records[$i]['values'] = (($this->records[$i]['citations']) * 0);
+                    $this->records[$i]['weight'] = (($this->records[$i]['citations']) * 0);
                     break;
             }
         };
     }
+
+    // CALCULATIONS WITHOUT USING SQL (currently uses SQL so commented out)
 
     /* public function removeDuplicates() {
 
@@ -144,6 +148,7 @@ class DataSort {
                 $table1->string('country');
                 $table1->integer('year');
                 $table1->integer('citations');
+                $table1->integer('weight');
             });
         };
         // create table for user defined time period if doesn't exist
@@ -153,6 +158,7 @@ class DataSort {
                 $table2->string('country');
                 $table2->integer('year');
                 $table2->integer('citations');
+                $table2->integer('weight');
             });
         };
         // create table for ten year time period if doesn't exist
@@ -162,6 +168,7 @@ class DataSort {
                 $table3->string('country');
                 $table3->integer('year');
                 $table3->integer('citations');
+                $table3->integer('weight');
             });
         };
         // create table for five year time period if doesn't exist
@@ -171,6 +178,7 @@ class DataSort {
                 $table4->string('country');
                 $table4->integer('year');
                 $table4->integer('citations');
+                $table4->integer('weight');
             });
         };
         // create table for five year time period if doesn't exist
@@ -180,6 +188,7 @@ class DataSort {
                 $table5->string('country');
                 $table5->integer('year');
                 $table5->integer('citations');
+                $table5->integer('weight');
             });
         };
 
@@ -202,7 +211,8 @@ class DataSort {
                         'author'    => $value,
                         'country'   => $data[$row]['country'],
                         'year'      => $data[$row]['pubyear'],
-                        'citations' => $data[$row]['citations']
+                        'citations' => $data[$row]['citations'],
+                        'weight'    => $data[$row]['weight']
                     ]
                 );
             }
@@ -219,7 +229,8 @@ class DataSort {
                     'author'    => $value->author,
                     'country'   => $value->country,
                     'year'      => $value->year,
-                    'citations' => $value->citations
+                    'citations' => $value->citations,
+                    'weight'    => $value->weight
                 ]
             );
         }
@@ -234,7 +245,8 @@ class DataSort {
                     'author'    => $value->author,
                     'country'   => $value->country,
                     'year'      => $value->year,
-                    'citations' => $value->citations
+                    'citations' => $value->citations,
+                    'weight'    => $value->weight
                 ]
             );
         }
@@ -249,7 +261,8 @@ class DataSort {
                     'author'    => $value->author,
                     'country'   => $value->country,
                     'year'      => $value->year,
-                    'citations' => $value->citations
+                    'citations' => $value->citations,
+                    'weight'    => $value->weight
                 ]
             );
         }
@@ -264,95 +277,186 @@ class DataSort {
                     'author'    => $value->author,
                     'country'   => $value->country,
                     'year'      => $value->year,
-                    'citations' => $value->citations
+                    'citations' => $value->citations,
+                    'weight'    => $value->weight
                 ]
             );
         }
     }
 
     // sum citations for duplicate authors
-    function sumCites() {
+    function sumCitesAll() {
         // update searchresponse
         \DB::update('UPDATE searchresponse AS a 
                          JOIN(
                              SELECT author,
                              SUM(citations) AS citations,
                              COUNT(author) AS b FROM searchresponse GROUP BY author
-                             ) grp1 
-                         ON grp1.author = a.author 
-                         SET a.citations = grp1.citations');
+                             ) grp
+                         ON grp.author = a.author 
+                         SET a.citations = grp.citations');
 
         //Now fetch all data from that table
         $sumAll = \DB::table('searchresponse')->get();
-            return $sumAll;
+        return $sumAll;
+    }
+    // sum weight for duplicate authors
+    function sumValuesAll() {
+        // update searchresponse
+        \DB::update('UPDATE searchresponse AS a 
+                         JOIN(
+                             SELECT author,
+                             SUM(weight) AS weight,
+                             COUNT(author) AS b FROM searchresponse GROUP BY author
+                             ) grp
+                         ON grp.author = a.author 
+                         SET a.weight = grp.weight');
+
+        //Now fetch all data from that table
+        $sumAll = \DB::table('searchresponse')->get();
+        return $sumAll;
+    }
+    function sumCitesUser() {
         // update userdefined
-        \DB::update('UPDATE userdefined AS c 
+        \DB::update('UPDATE userdefined AS a 
                          JOIN(
                              SELECT author,
                              SUM(citations) AS citations,
-                             COUNT(author) AS d FROM userdefined GROUP BY author
-                             ) grp2 
-                         ON grp2.author = c.author 
-                         SET c.citations = grp2.citations');
+                             COUNT(author) AS b FROM userdefined GROUP BY author
+                             ) grp
+                         ON grp.author = a.author 
+                         SET a.citations = grp.citations');
 
         //Now fetch all data from that table
         $sumUserDefined = \DB::table('userdefined')->get();
-            return $sumUserDefined;
+        return $sumUserDefined;
+    }
+    // sum weight for duplicate authors
+    function sumValuesUser() {
+        // update userdefined
+        \DB::update('UPDATE userdefined AS a 
+                         JOIN(
+                             SELECT author,
+                             SUM(weight) AS weight,
+                             COUNT(author) AS b FROM userdefined GROUP BY author
+                             ) grp
+                         ON grp.author = a.author 
+                         SET a.weight = grp.weight');
+
+        //Now fetch all data from that table
+        $sumAll = \DB::table('userdefined')->get();
+        return $sumAll;
+    }
+    function sumCitesTen() {
         // update tenyear
-        \DB::update('UPDATE tenyear AS e 
+        \DB::update('UPDATE tenyear AS a 
                          JOIN(
                              SELECT author,
                              SUM(citations) AS citations,
-                             COUNT(author) AS f FROM tenyear GROUP BY author
-                             ) grp3 
-                         ON grp3.author = e.author 
-                         SET e.citations = grp3.citations');
+                             COUNT(author) AS b FROM tenyear GROUP BY author
+                             ) grp 
+                         ON grp.author = a.author 
+                         SET a.citations = grp.citations');
 
         //Now fetch all data from that table
         $sumTen = \DB::table('tenyear')->get();
-            return $sumTen;
+        return $sumTen;
+    }
+    // sum weight for duplicate authors
+    function sumValuesTen() {
+        // update tenyear
+        \DB::update('UPDATE tenyear AS a 
+                         JOIN(
+                             SELECT author,
+                             SUM(weight) AS weight,
+                             COUNT(author) AS b FROM tenyear GROUP BY author
+                             ) grp
+                         ON grp.author = a.author 
+                         SET a.weight = grp.weight');
+
+        //Now fetch all data from that table
+        $sumAll = \DB::table('tenyear')->get();
+        return $sumAll;
+    }
+    function sumCitesFive() {
         // update fiveyear
-        \DB::update('UPDATE fiveyear AS g 
+        \DB::update('UPDATE fiveyear AS a 
                          JOIN(
                              SELECT author,
                              SUM(citations) AS citations,
-                             COUNT(author) AS h FROM fiveyear GROUP BY author
-                             ) grp4 
-                         ON grp4.author = g.author 
-                         SET g.citations = grp4.citations');
+                             COUNT(author) AS b FROM fiveyear GROUP BY author
+                             ) grp 
+                         ON grp.author = a.author 
+                         SET a.citations = grp.citations');
 
         //Now fetch all data from that table
         $sumFive = \DB::table('fiveyear')->get();
-            return $sumFive;
+        return $sumFive;
+    }
+    // sum weight for duplicate authors
+    function sumValuesFive() {
+        // update fiveyear
+        \DB::update('UPDATE fiveyear AS a 
+                         JOIN(
+                             SELECT author,
+                             SUM(weight) AS weight,
+                             COUNT(author) AS b FROM fiveyear GROUP BY author
+                             ) grp
+                         ON grp.author = a.author 
+                         SET a.weight = grp.weight');
+
+        //Now fetch all data from that table
+        $sumAll = \DB::table('fiveyear')->get();
+        return $sumAll;
+    }
+    function sumCitesTwo() {
         // update twoyear
-        \DB::update('UPDATE twoyear AS i 
+        \DB::update('UPDATE twoyear AS a 
                          JOIN(
                              SELECT author,
                              SUM(citations) AS citations,
-                             COUNT(author) AS j FROM twoyear GROUP BY author
-                             ) grp5 
-                         ON grp5.author = i.author 
-                         SET i.citations = grp5.citations');
+                             COUNT(author) AS b FROM twoyear GROUP BY author
+                             ) grp
+                         ON grp.author = a.author 
+                         SET a.citations = grp.citations');
 
         //Now fetch all data from that table
         $sumTwo = \DB::table('twoyear')->get();
-            return $sumTwo;
+        return $sumTwo;
+    }
+    // sum weight for duplicate authors
+    function sumValuesTwo() {
+        // update twoyear
+        \DB::update('UPDATE twoyear AS a 
+                         JOIN(
+                             SELECT author,
+                             SUM(weight) AS weight,
+                             COUNT(author) AS b FROM twoyear GROUP BY author
+                             ) grp
+                         ON grp.author = a.author 
+                         SET a.weight = grp.weight');
+
+        //Now fetch all data from that table
+        $sumAll = \DB::table('twoyear')->get();
+        return $sumAll;
     }
 
     // to remove the unnecessary attributes from the values array
     public function removeAttributes($valuesData) {
 
-        // sort value data so that it only has 2 values for bubble chart (author & value)
+        // sort value data so that it only has 2 values for bubble chart (author & weight)
         for ($i = 0; $i < (count($this->valueArray)); $i++) {
             unset($this->valueArray[$i]['citations']);
-            unset($this->valueArray[$i]['pubyear']);
+            unset($this->valueArray[$i]['country']);
+            unset($this->valueArray[$i]['year']);
         };
     }
 
     // to pull back the data from the database to PHP arrays
     public function pullData($tableName) {
-        DB::table($tableName)
+        $result =  DB::table($tableName)
             ->groupBy('author')
             ->get();
+        return $result;
     }
 }
