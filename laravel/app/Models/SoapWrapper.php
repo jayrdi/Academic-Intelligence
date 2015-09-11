@@ -17,7 +17,7 @@ class SoapWrapper {
     // XML data to send as SOAP Request to WoS
     public $data;
     // array to store records
-    public $records = array();
+    public $records = [];
     
     // function to perform SOAP exchange with WoS API
     public function soapExchange($data) {
@@ -218,6 +218,7 @@ class SoapWrapper {
                 // $aRecord (equivalent to one row of data in table)
                 $arecord = [    
                                 "authors"   => $authors,
+                                "ID"        => "",
                                 "pubyear"   => $pubyear,
                                 "country"   => $country,
                                 "citations" => $citations

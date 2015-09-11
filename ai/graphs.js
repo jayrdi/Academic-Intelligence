@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+    // console.log(topValued);
+
     // different colour settings for graphs
     var palette1 = {
         fill: "steelblue",
@@ -23,7 +25,7 @@ $(document).ready(function() {
 
     // set title for user defined graph
     var graphTitle = $(".userTitle");
-    $(graphTitle).prepend(searchData.from + " to " + searchData.to);
+    graphTitle.prepend(searchData.from + " to " + searchData.to);
     
     // change graph according to dropdown choice
     var wrapperG = $(".graph_fields_wrap1"); // wrapper for div containing citations graphs
@@ -184,7 +186,7 @@ $(document).ready(function() {
         }
     });
 
-    // // optional cited, previous author set
+    // optional cited, previous author set
     $(wrapperG).on("click", "#previous2", function (e) {
         // ignore default action for this event
         e.preventDefault();
@@ -350,6 +352,7 @@ $(document).ready(function() {
                                                $(location).attr("href", url);
                                                window.location = url;
                                                break;
+                                           // special case for funded graphs, can use ID for better results
                                            default:
                                                // variable stores url for google and adds ID relevant to bar that was clicked
                                                var url = "https://www.google.co.uk/#q=" + d.personID + " " + d.author;

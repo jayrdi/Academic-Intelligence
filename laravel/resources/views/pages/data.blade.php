@@ -2,11 +2,6 @@
 
 @section('content')
 
-<!-- d3 -->
-{!! HTML::script('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js') !!}
-<!-- local script -->
-{!! HTML::script('js/graphs.js') !!}
-
 <section class="graphs container">
 
     <div class="row col-lg-12" id="header">
@@ -141,5 +136,10 @@
     </script>
 
 </section>
+
+<!-- d3 -->
+{!! HTML::script('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js') !!}
+<!-- local script -->
+{!! HTML::script('js/graphs.js') !!}
 
 @stop

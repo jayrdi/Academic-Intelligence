@@ -80,7 +80,7 @@ class RestWrapper {
 	    // need to replace single quotes to avoid char escape
 	    for ($i = 0; $i < count($this->projects); $i++) {
 	        $this->projects[$i]['author'] = str_replace("'", "", $this->projects[$i]['author']);
-	        $this->projects[$i]['title'] = str_replace("'", "", $this->projects[$i]['author']);
+	        $this->projects[$i]['title'] = str_replace("'", "", $this->projects[$i]['title']);
 	    };
 	}
 

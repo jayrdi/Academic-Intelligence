@@ -147,6 +147,7 @@ class DataSort {
                 $table1->string('author');
                 $table1->string('country');
                 $table1->integer('year');
+                $table1->string('ID');
                 $table1->integer('citations');
                 $table1->integer('weight');
             });
@@ -157,6 +158,7 @@ class DataSort {
                 $table2->string('author');
                 $table2->string('country');
                 $table2->integer('year');
+                $table2->string('ID');
                 $table2->integer('citations');
                 $table2->integer('weight');
             });
@@ -167,6 +169,7 @@ class DataSort {
                 $table3->string('author');
                 $table3->string('country');
                 $table3->integer('year');
+                $table3->string('ID');
                 $table3->integer('citations');
                 $table3->integer('weight');
             });
@@ -177,6 +180,7 @@ class DataSort {
                 $table4->string('author');
                 $table4->string('country');
                 $table4->integer('year');
+                $table4->string('ID');
                 $table4->integer('citations');
                 $table4->integer('weight');
             });
@@ -187,6 +191,7 @@ class DataSort {
                 $table5->string('author');
                 $table5->string('country');
                 $table5->integer('year');
+                $table5->string('ID');
                 $table5->integer('citations');
                 $table5->integer('weight');
             });
@@ -211,6 +216,7 @@ class DataSort {
                         'author'    => $value,
                         'country'   => $data[$row]['country'],
                         'year'      => $data[$row]['pubyear'],
+                        'ID'        => $data[$row]['ID'],
                         'citations' => $data[$row]['citations'],
                         'weight'    => $data[$row]['weight']
                     ]
@@ -229,6 +235,7 @@ class DataSort {
                     'author'    => $value->author,
                     'country'   => $value->country,
                     'year'      => $value->year,
+                    'ID'        => $value->ID,
                     'citations' => $value->citations,
                     'weight'    => $value->weight
                 ]
@@ -245,6 +252,7 @@ class DataSort {
                     'author'    => $value->author,
                     'country'   => $value->country,
                     'year'      => $value->year,
+                    'ID'        => $value->ID,
                     'citations' => $value->citations,
                     'weight'    => $value->weight
                 ]
@@ -261,6 +269,7 @@ class DataSort {
                     'author'    => $value->author,
                     'country'   => $value->country,
                     'year'      => $value->year,
+                    'ID'        => $value->ID,
                     'citations' => $value->citations,
                     'weight'    => $value->weight
                 ]
@@ -277,6 +286,7 @@ class DataSort {
                     'author'    => $value->author,
                     'country'   => $value->country,
                     'year'      => $value->year,
+                    'ID'        => $value->ID,
                     'citations' => $value->citations,
                     'weight'    => $value->weight
                 ]
@@ -331,22 +341,22 @@ class DataSort {
         $sumUserDefined = \DB::table('userdefined')->get();
         return $sumUserDefined;
     }
-    // sum weight for duplicate authors
-    function sumValuesUser() {
-        // update userdefined
-        \DB::update('UPDATE userdefined AS a 
-                         JOIN(
-                             SELECT author,
-                             SUM(weight) AS weight,
-                             COUNT(author) AS b FROM userdefined GROUP BY author
-                             ) grp
-                         ON grp.author = a.author 
-                         SET a.weight = grp.weight');
+    // // sum weight for duplicate authors
+    // function sumValuesUser() {
+    //     // update userdefined
+    //     \DB::update('UPDATE userdefined AS a 
+    //                      JOIN(
+    //                          SELECT author,
+    //                          SUM(weight) AS weight,
+    //                          COUNT(author) AS b FROM userdefined GROUP BY author
+    //                          ) grp
+    //                      ON grp.author = a.author 
+    //                      SET a.weight = grp.weight');
 
-        //Now fetch all data from that table
-        $sumAll = \DB::table('userdefined')->get();
-        return $sumAll;
-    }
+    //     //Now fetch all data from that table
+    //     $sumAll = \DB::table('userdefined')->get();
+    //     return $sumAll;
+    // }
     function sumCitesTen() {
         // update tenyear
         \DB::update('UPDATE tenyear AS a 
@@ -363,21 +373,21 @@ class DataSort {
         return $sumTen;
     }
     // sum weight for duplicate authors
-    function sumValuesTen() {
-        // update tenyear
-        \DB::update('UPDATE tenyear AS a 
-                         JOIN(
-                             SELECT author,
-                             SUM(weight) AS weight,
-                             COUNT(author) AS b FROM tenyear GROUP BY author
-                             ) grp
-                         ON grp.author = a.author 
-                         SET a.weight = grp.weight');
+    // function sumValuesTen() {
+    //     // update tenyear
+    //     \DB::update('UPDATE tenyear AS a 
+    //                      JOIN(
+    //                          SELECT author,
+    //                          SUM(weight) AS weight,
+    //                          COUNT(author) AS b FROM tenyear GROUP BY author
+    //                          ) grp
+    //                      ON grp.author = a.author 
+    //                      SET a.weight = grp.weight');
 
-        //Now fetch all data from that table
-        $sumAll = \DB::table('tenyear')->get();
-        return $sumAll;
-    }
+    //     //Now fetch all data from that table
+    //     $sumAll = \DB::table('tenyear')->get();
+    //     return $sumAll;
+    // }
     function sumCitesFive() {
         // update fiveyear
         \DB::update('UPDATE fiveyear AS a 
@@ -394,21 +404,21 @@ class DataSort {
         return $sumFive;
     }
     // sum weight for duplicate authors
-    function sumValuesFive() {
-        // update fiveyear
-        \DB::update('UPDATE fiveyear AS a 
-                         JOIN(
-                             SELECT author,
-                             SUM(weight) AS weight,
-                             COUNT(author) AS b FROM fiveyear GROUP BY author
-                             ) grp
-                         ON grp.author = a.author 
-                         SET a.weight = grp.weight');
+    // function sumValuesFive() {
+    //     // update fiveyear
+    //     \DB::update('UPDATE fiveyear AS a 
+    //                      JOIN(
+    //                          SELECT author,
+    //                          SUM(weight) AS weight,
+    //                          COUNT(author) AS b FROM fiveyear GROUP BY author
+    //                          ) grp
+    //                      ON grp.author = a.author 
+    //                      SET a.weight = grp.weight');
 
-        //Now fetch all data from that table
-        $sumAll = \DB::table('fiveyear')->get();
-        return $sumAll;
-    }
+    //     //Now fetch all data from that table
+    //     $sumAll = \DB::table('fiveyear')->get();
+    //     return $sumAll;
+    // }
     function sumCitesTwo() {
         // update twoyear
         \DB::update('UPDATE twoyear AS a 
@@ -425,21 +435,21 @@ class DataSort {
         return $sumTwo;
     }
     // sum weight for duplicate authors
-    function sumValuesTwo() {
-        // update twoyear
-        \DB::update('UPDATE twoyear AS a 
-                         JOIN(
-                             SELECT author,
-                             SUM(weight) AS weight,
-                             COUNT(author) AS b FROM twoyear GROUP BY author
-                             ) grp
-                         ON grp.author = a.author 
-                         SET a.weight = grp.weight');
+    // function sumValuesTwo() {
+    //     // update twoyear
+    //     \DB::update('UPDATE twoyear AS a 
+    //                      JOIN(
+    //                          SELECT author,
+    //                          SUM(weight) AS weight,
+    //                          COUNT(author) AS b FROM twoyear GROUP BY author
+    //                          ) grp
+    //                      ON grp.author = a.author 
+    //                      SET a.weight = grp.weight');
 
-        //Now fetch all data from that table
-        $sumAll = \DB::table('twoyear')->get();
-        return $sumAll;
-    }
+    //     //Now fetch all data from that table
+    //     $sumAll = \DB::table('twoyear')->get();
+    //     return $sumAll;
+    // }
 
     // to remove the unnecessary attributes from the values array
     public function removeAttributes($valuesData) {
@@ -447,6 +457,7 @@ class DataSort {
         // sort value data so that it only has 2 values for bubble chart (author & weight)
         for ($i = 0; $i < (count($this->valueArray)); $i++) {
             unset($this->valueArray[$i]['citations']);
+            unset($this->valueArray[$i]['ID']);
             unset($this->valueArray[$i]['country']);
             unset($this->valueArray[$i]['year']);
         };

@@ -15,3 +15,5 @@ Route::post('data', 'PagesController@process');
 
 // route for no records found error
 Route::get('norecords', ['as' => 'norecords', 'uses' => 'PagesController@noRecordsError']);
+
+?>

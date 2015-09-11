@@ -63,6 +63,7 @@ $(document).ready(function() {
 
     // when the selection is changed in the dropdown menu do:
     selector.on("change", function(e) {
+        console.log("CHANGE!");
         // ignore default action for this event
         e.preventDefault();
         // remove currently displayed graph, 1st child of div (1st graph is 0th)
@@ -265,14 +266,7 @@ $(document).ready(function() {
         }
     });
 
-    // create arrays to store various chart names
-    var citedCharts = [
-                          "chart1",
-                          "chart2",
-                          "chart4",
-                          "chart5",
-                          "chart6"
-                      ];
+    // create array to store various chart names
     var fundedCharts = [
                           "chart7",
                           "chart8",

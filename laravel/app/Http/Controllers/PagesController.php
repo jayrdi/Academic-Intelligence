@@ -7,6 +7,7 @@ use App\SoapController;
 use App\Models\SearchData;
 use App\Models\SoapWrapper;
 use App\Models\RestWrapper;
+use App\Models\ScopusWrapper;
 use App\Models\DataSort;
 use App\Models\BubbleChartCompatible;
 use DB;
@@ -213,24 +214,33 @@ class PagesController extends Controller {
 	    };
 
 	    // replace any whitespace with %20 (url encoding)
-	    $keyword1 = str_replace(" ", "%20", $keyword1);
-	    $keyword2 = str_replace(" ", "%20", $keyword2);
-	    $keyword3 = str_replace(" ", "%20", $keyword3);
+	    // $keyword1 = str_replace(" ", "%20", $keyword1);
+	    // $keyword2 = str_replace(" ", "%20", $keyword2);
+	    // $keyword3 = str_replace(" ", "%20", $keyword3);
+	    $keyword1 = urlencode($keyword1);
+	    $keyword2 = urlencode($keyword2);
+	    $keyword3 = urlencode($keyword3);
 
 	    // create new SoapWrapper object to get SOAP data from WoS
-	    $soap = new SoapWrapper;
+	    // $soap = new SoapWrapper;
 
 	    // create new RestWrapper object to get REST data from GtR
 	    $rest = new RestWrapper;
 
+	    // create new ScopusWrapper object to get REST data from Scopus
+	    $scopus = new ScopusWrapper;
+
 	    // authenticate WoS search to get SID; get initial data (SoapWrapper function)
-		$soap->soapExchange($dataParams);
+		// $soap->soapExchange($dataParams);
 
 		// perform REST exchange with GtR API
 		$rest->restExchange($keyword1, $keyword2, $keyword3);
 
+		// perform REST exchange with Scopus API
+		$scopus->scopusWebExchange($keyword1, $keyword2, $keyword3);
+
 		// perform iterativeWosSearch (SoapWrapper class) to get all records from WoS
-		$soap->iterateWosSearch($soap);
+		// $soap->iterateWosSearch($soap);
 
 		// perform iterateGtrSearch (RestWrapper class) to get all records from GtR
 		$rest->iterateGtrSearch($keyword1, $keyword2, $keyword3);
@@ -251,64 +261,131 @@ class PagesController extends Controller {
 		// make the funds more readable as they are generally in the millions
 		$rest->readableFunds();
 
-		// create a new DataSort object to store all the data for the various graphs
-		$rawData = new DataSort($soap->records);
+		// create a new DataSort object to store all the data for the WoS graphs
+		// $wosData = new DataSort($soap->records);
 
-		// assign a determined value to each publication
-		$rawData->assignValues();
+		// create a new DataSort object to store all the data for the Scopus graphs
+		$scopusData = new DataSort($scopus->scopusData);
 
-		// run function to create tables for db
-		$rawData->createTables();
+		// assign a determined value to each author (WoS)
+		// $wosData->assignValues();
 
-		// populate tables with data from $rawData->records
-		$rawData->populateTables($rawData->records, $timeStart, $timeEnd);
+		// assign a determined value to each author (Scopus)
+		$scopusData->assignValues(); 
 
-		// sum the citations values in all the tables for duplicate authors
-		$rawData->sumCitesAll();
+		// run function to create tables for db for WoS data
+		// $wosData->createTables();
+
+		// run function to create tables for db for Scopus data
+		$scopusData->createTables();
+
+		// populate tables with data from $wosData->records
+		// $wosData->populateTables($wosData->records, $timeStart, $timeEnd);
+
+		// populate tables with data from $scopusData->records
+		$scopusData->populateTables($scopusData->records, $timeStart, $timeEnd);
+
+		// sum the citations values in all the tables for duplicate authors (WoS)
+		// $wosData->sumCitesAll();
+		// $wosData->sumCitesUser();
+		// $wosData->sumCitesTen();
+		// $wosData->sumCitesFive();
+		// $wosData->sumCitesTwo();
 		// sum the weighted values in all the tables for duplicate authors
-		$rawData->sumValuesAll();
-		$rawData->sumCitesUser();
-		$rawData->sumValuesUser();
-		$rawData->sumCitesTen();
-		$rawData->sumValuesTen();
-		$rawData->sumCitesFive();
-		$rawData->sumValuesFive();
-		$rawData->sumCitesTwo();
-		$rawData->sumValuesTwo();
+		// $wosData->sumValuesAll();
 
-		// return processed data back from MySQL to PHP arrays & convert to associative arrays
-		$rawData->allArray = json_decode(json_encode($rawData->pullData('searchresponse')), true);
-		$rawData->timeArray = json_decode(json_encode($rawData->pullData('userdefined')), true);
-		$rawData->tenArray = json_decode(json_encode($rawData->pullData('tenyear')), true);
-		$rawData->fiveArray = json_decode(json_encode($rawData->pullData('fiveyear')), true);
-		$rawData->twoArray = json_decode(json_encode($rawData->pullData('twoyear')), true);
-		$rawData->valueArray = json_decode(json_encode($rawData->pullData('searchresponse')), true);
+		// sum the citations values in all the tables for duplicate authors (Scopus)
+		$scopusData->sumCitesAll();
+		$scopusData->sumCitesUser();
+		$scopusData->sumCitesTen();
+		$scopusData->sumCitesFive();
+		$scopusData->sumCitesTwo();
+		// sum the weighted values in all the tables for duplicate authors
+		$scopusData->sumValuesAll();
 
-		// sort data by highest cited first
-		$rawData->sortData($rawData, 'allArray', 'citations');
-		$rawData->sortData($rawData, 'timeArray', 'citations');
-		$rawData->sortData($rawData, 'tenArray', 'citations');
-		$rawData->sortData($rawData, 'fiveArray', 'citations');
-		$rawData->sortData($rawData, 'twoArray', 'citations');
-		$rawData->sortData($rawData, 'valueArray', 'weight');
+		// return processed data back from MySQL to PHP arrays & convert to associative arrays (WoS)
+		// $wosData->allArray = json_decode(json_encode($wosData->pullData('searchresponse')), true);
+		// $wosData->timeArray = json_decode(json_encode($wosData->pullData('userdefined')), true);
+		// $wosData->tenArray = json_decode(json_encode($wosData->pullData('tenyear')), true);
+		// $wosData->fiveArray = json_decode(json_encode($wosData->pullData('fiveyear')), true);
+		// $wosData->twoArray = json_decode(json_encode($wosData->pullData('twoyear')), true);
+		// $wosData->valueArray = json_decode(json_encode($wosData->pullData('searchresponse')), true);
+
+		// return processed data back from MySQL to PHP arrays & convert to associative arrays (Scopus)
+		$scopusData->allArray = json_decode(json_encode($scopusData->pullData('searchresponse')), true);
+		$scopusData->timeArray = json_decode(json_encode($scopusData->pullData('userdefined')), true);
+		$scopusData->tenArray = json_decode(json_encode($scopusData->pullData('tenyear')), true);
+		$scopusData->fiveArray = json_decode(json_encode($scopusData->pullData('fiveyear')), true);
+		$scopusData->twoArray = json_decode(json_encode($scopusData->pullData('twoyear')), true);
+		$scopusData->valueArray = json_decode(json_encode($scopusData->pullData('searchresponse')), true);
+
+		// sort data by highest cited first (WoS)
+		// $wosData->sortData($wosData, 'allArray', 'citations');
+		// $wosData->sortData($wosData, 'timeArray', 'citations');
+		// $wosData->sortData($wosData, 'tenArray', 'citations');
+		// $wosData->sortData($wosData, 'fiveArray', 'citations');
+		// $wosData->sortData($wosData, 'twoArray', 'citations');
+		// $wosData->sortData($wosData, 'valueArray', 'weight');
+
+		// sort data by highest cited first (Scopus)
+		$scopusData->sortData($scopusData, 'allArray', 'citations');
+		$scopusData->sortData($scopusData, 'timeArray', 'citations');
+		$scopusData->sortData($scopusData, 'tenArray', 'citations');
+		$scopusData->sortData($scopusData, 'fiveArray', 'citations');
+		$scopusData->sortData($scopusData, 'twoArray', 'citations');
+		$scopusData->sortData($scopusData, 'valueArray', 'weight');
 
 	    // sort value data so that it only has 2 values for bubble chart (author & value)
-	    $rawData->removeAttributes($rawData->valueArray);
+	    // $wosData->removeAttributes($wosData->valueArray);
+	    $scopusData->removeAttributes($scopusData->valueArray);
 
 	    // for data to work in d3 as bubble chart, needs to have parent and children
-	    $rawData->valuesJSON = [];
-	    $rawData->valuesJSON["name"] = "rankedData";
-	    $rawData->valuesJSON["children"] = $rawData->valueArray;
+	    // $wosData->valuesJSON = [];
+	    // $wosData->valuesJSON["name"] = "rankedData";
+	    // $wosData->valuesJSON["children"] = $wosData->valueArray;
+	    // SCOPUS
+		$scopusData->valuesJSON = [];
+	    $scopusData->valuesJSON["name"] = "rankedData";
+	    $scopusData->valuesJSON["children"] = $scopusData->valueArray;
 
-	    // JSON encode cited data for use in jQuery
-	    $allCited = json_encode($rawData->allArray);
-	    $userCited = json_encode($rawData->timeArray);
-	    $tenCited = json_encode($rawData->tenArray);
-	    $fiveCited = json_encode($rawData->fiveArray);
-	    $twoCited = json_encode($rawData->twoArray);
+	    // remove all elements that have a weight of 0 (WoS)
+	    // for ($i = 0; $i < count($wosData->valuesJSON["children"]); $i++) {
+	   	//  	if ($wosData->valuesJSON["children"][$i]["weight"] == 0) {
+	   	//  		// set end of weighted records for slice
+	   	//  		$endSlice = ($i-1);
+	   	//  		break 2;
+	  	 // 	}
+	    // };
+	    // $weightedWos = array_slice($scopusData->valuesJSON["children"], 0, $endSlice);
+	    // SCOPUS
+	    for ($i = 0; $i < count($scopusData->valuesJSON["children"]); $i++) {
+	   	 	if ($scopusData->valuesJSON["children"][$i]["weight"] == 0) {
+	   	 		// set end of weighted records for slice
+	   	 		$endSlice = ($i);
+	   	 		break;
+	  	 	}
+	    };
+	    $weightedScopus = array_slice($scopusData->valuesJSON["children"], 0, $endSlice);
+
+	    // JSON encode cited data for use in jQuery (WoS)
+	    // $allCited = json_encode($wosData->allArray);
+	    // $userCited = json_encode($wosData->timeArray);
+	    // $tenCited = json_encode($wosData->tenArray);
+	    // $fiveCited = json_encode($wosData->fiveArray);
+	    // $twoCited = json_encode($wosData->twoArray);
 
 	    // JSON encode values data for use in jQuery
-	    $valueData = json_encode($rawData->valuesJSON);
+	    // $valueData = json_encode($weightedWos);
+
+		// JSON encode cited data for use in jQuery (Scopus)
+	    $allCited = json_encode($scopusData->allArray);
+	    $userCited = json_encode($scopusData->timeArray);
+	    $tenCited = json_encode($scopusData->tenArray);
+	    $fiveCited = json_encode($scopusData->fiveArray);
+	    $twoCited = json_encode($scopusData->twoArray);
+
+	    // JSON encode values data for use in jQuery
+	    $valueData = json_encode($weightedScopus);
 
 	    // JSON encode funds data for use in jQuery
 	    $allFunds = json_encode($rest->projects);
@@ -316,6 +393,11 @@ class PagesController extends Controller {
 	    $tenFunds = json_encode($rest->tenArrayFunds);
 	    $fiveFunds = json_encode($rest->fiveArrayFunds);
 	    $twoFunds = json_encode($rest->twoArrayFunds);
+
+	    echo "</br>BUBBLE CHART VALUES:</br>";
+		print "<pre>\n";
+		print_r($valueData);
+		print "</pre>";
 	    
 	    // pass data to JavaScript (uses https://github.com/laracasts/PHP-Vars-To-Js-Transformer)
 		JavaScript::put([
