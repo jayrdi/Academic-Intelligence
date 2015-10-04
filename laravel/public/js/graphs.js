@@ -40,9 +40,7 @@ $(document).ready(function() {
     };
 
     // set title for user defined graph
-    var graphTitle = $(".userTitle");
-    console.log(searchData.from + " to " + searchData.to);
-    graphTitle.prepend(searchData.from + " to " + searchData.to);
+    $(".userTitle").prepend(searchData.from + " to " + searchData.to);
     
     // change graph according to dropdown choice
     var wrapperG = $(".graph_fields_wrap1"); // wrapper for div containing citations graphs
@@ -63,12 +61,11 @@ $(document).ready(function() {
 
     // when the selection is changed in the dropdown menu do:
     selector.on("change", function(e) {
-        console.log("CHANGE!");
         // ignore default action for this event
         e.preventDefault();
         // remove currently displayed graph, 1st child of div (1st graph is 0th)
-        $(wrapperG.children()[1]).remove();
-        $(wrapperF.children()[1]).remove();
+        wrapperG.children()[1].remove();
+        wrapperF.children()[1].remove();
         // get value of currently selected
         var selectedVal = $(this).val();
         selected = selectedVal;

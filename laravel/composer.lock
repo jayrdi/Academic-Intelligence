@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4aedc381a4cb58653df231ba58c8d012",
+    "hash": "ba67504bfcf57f7d94c43c52eefce423",
+    "content-hash": "f391b49ff15c79a0bb249272bb70d023",
     "packages": [
         {
             "name": "artisaninweb/laravel-soap",

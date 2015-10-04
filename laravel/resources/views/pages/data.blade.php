@@ -31,7 +31,7 @@
         <div class="col-lg-2"></div>
     </div> <!-- row -->
 
-    <div class="graph_fields_wrap row backdrop col-lg-12">
+    <div class="graph_fields_wrap1 row backdrop col-lg-12">
             <div class="col-lg-6">
                 <h3 class="titles">Ranked Author Citations</h3>
                 <h4 class="titles">All time (from 1970)</h4>
@@ -42,7 +42,7 @@
             </div>
             <div class="col-lg-6">
                 <h3 class="titles">Ranked Author Citations</h3>
-                <h4 class="titles" id="userTitle"></h4>
+                <h4 class="titles userTitle"></h4>
                 <button class="pager" id="previous2" type="button" disabled><span class="glyphicon glyphicon-chevron-left"></span> previous</button>
                 <button class="pager indexer" type="button" disabled>1 - 10</button>
                 <button class="pager" id="next2" type="button">next <span class="glyphicon glyphicon-chevron-right"></span></button>

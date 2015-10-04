@@ -206,6 +206,7 @@ a:link, a:visited, a:hover, a:active {
 
 .jumbotron {
     display: block !important;
+    float: none !important;
     bottom: 0 !important;
     margin-right: auto !important;
     margin-left: auto !important;

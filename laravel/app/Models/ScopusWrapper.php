@@ -30,7 +30,7 @@ class ScopusWrapper {
         // iterate data loading next page each time and adding new results to array
         for($i = $start; $i <= $total; $i+=100) {
             // REST HTTP GET Request searching for people associated with keywords (term)
-            $eachLink = "http://api.elsevier.com/content/search/scopus?query=KEY(" . $search1 . $search2 . ")" . $apiKey . "&sort=citedby-count&count=100&start=" . $i . "&view=complete";
+            $eachLink = "http://api.elsevier.com/content/search/scopus?query=KEY(" . $search1 . $search2 . $search3 . ")" . $apiKey . "&sort=citedby-count&count=100&start=" . $i . "&view=complete";
 
             // save results to a variable
             $eachResponse = file_get_contents($eachLink);
