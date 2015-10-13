@@ -92,13 +92,11 @@ class SoapWrapper {
 
             // check if there has been a soap fault with the query OR if there are 0 records for the search
             if (is_soap_fault($search_client->__getLastResponse()) || $len == 0) {
-                echo "NO RECORDS";
-                // return view('pages.norecords');
+                return Redirect::to('norecords')->send();
             };
 
         } catch (\SoapFault $e) {
-            echo "THROTTLE SERVER OVERLOAD";
-            // return view('pages.throttle');
+            return Redirect::to('throttle')->send();
         }
     }
 
@@ -128,7 +126,13 @@ class SoapWrapper {
         };
 
         // panel to display records loading progress, js updates current record in #progressPanel
-        echo "<div class='panel panel-primary' id='alertBox'>
+        echo "<link href='//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/readable/bootstrap.min.css' rel='stylesheet'>
+              <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+              <style>
+              #alertBox {position:fixed !important;left: 35% !important;top: 35% !important;}
+              .glyphicon-info-sign {margin-left: 15px !important;}
+              </style>
+              <div class='panel panel-primary' id='alertBox'>
                   <div class='panel-heading'>
                       <h1 class='panel-title'>
                       PROGRESS<span class='glyphicon glyphicon-info-sign'></span>
@@ -138,7 +142,7 @@ class SoapWrapper {
                       <p id='progressPanel'></p>
                       <p>The <strong>maximum</strong> estimated time for this query is " .$minutes. " minutes & " .$seconds. " seconds</p>
                       <h2>
-                          <button type='submit' class='back btn btn-primary' onclick='goBack()'>
+                          <button type='submit' class='back btn btn-primary' onclick='window.location.href = '/';'>
                               <span class='glyphicon glyphicon-remove'></span>
                               <strong>Cancel</strong>
                           </button>
@@ -184,9 +188,11 @@ class SoapWrapper {
                 // create authors array for this REC data
                 $authors = [];
 
-                // echo "<script type='text/javascript'>
-                //           setRecord(" .$counter. ");
-                //       </script>";
+                echo "<script type='text/javascript'>
+                      $(document).ready(function() {
+                          document.getElementById('progressPanel').innerHTML = '<strong>Loading record " .$counter. "</strong>;
+                      });
+                      </script>";
 
                 ob_flush(); // flush anything from the header output buffer
                 flush(); // send contents so far to the browser
@@ -229,9 +235,18 @@ class SoapWrapper {
                 // record or row of data for a single journal
                 array_push($submit->records, $arecord) ;
             }
-        // increment for next record
-        $counter+=100;
-        }
+            // increment for next record
+            $counter+=100;
+        };
+
+        // finished loading records, display 'processing' load bar
+        echo "<script type='text/javascript'>
+              $(document).ready(function() {
+                  $('#processing').show();
+              });
+              </script>";
+        ob_flush();
+        flush();
 
         // need to replace some charas to help remove duplicates
         for ($i = 0; $i < count($submit->records); $i++) {

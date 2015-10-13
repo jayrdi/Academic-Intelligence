@@ -1,10 +1,35 @@
-@extends('app')
+<!DOCTYPE HTML>
 
-@section('content')
+<html lang="en">
+<head>
+{{-- this stops the default compatibility view for intranet sites in IE --}}
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<title>Academic Intelligence</title>
+
+{{-- LINKS --}}
+
+{{-- local css file --}}
+{!! HTML::style('css/style.css') !!}
+{{-- bootstrap css (bootswatch readable style) --}}
+{!! HTML::style('//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/readable/bootstrap.min.css') !!}
+{{-- favicon; newcastle logo --}}
+<link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" />
+{{-- fonts --}}
+<link href='https://fonts.googleapis.com/css?family=Raleway:700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700' rel='stylesheet' type='text/css'>
+
+{{-- SCRIPTS --}}
+
+{{-- jquery --}}
+{!! HTML::script('https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js') !!}
+{{-- bootstrap js --}}
+{!! HTML::script('//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js') !!}
+{{-- local script --}}
+{!! HTML::script('js/script.js') !!}
 
 {{-- displays a panel if there are no records from the search --}}
 {{-- bootstrap panel --}}
-<div class='panel panel-danger col-lg-3' id='alertBox' role='alert'>
+<div class='panel panel-danger col-lg-4' id='alertBox' role='alert'>
    <div class='panel-heading'>
        <h1 class='panel-title'>
            ALERT<span class='glyphicon glyphicon-exclamation-sign'></span>
@@ -23,4 +48,4 @@
    </div>
 </div>
 
-@stop
+</html>

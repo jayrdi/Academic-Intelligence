@@ -3,7 +3,7 @@
 <html lang="en">
 
 	{{-- this section is commented out for localhost running, when
-	live on ResViz, remove the comment symbols on lines 10 & 16 --}}
+	live on ResViz, remove the comment symbols on lines 9 & 15 --}}
 
 	{{-- USER LOGIN SECURITY --}}
 	{{-- require('redis-session.php');

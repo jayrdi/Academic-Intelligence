@@ -114,7 +114,7 @@ $(document).ready(function() {
 
     // function to redirect to index page
     function goBack() {
-        window.location.href = 'index.php';
+        window.location.href = '/';
     };
 
     // function to remove the info panel once page has loaded
