@@ -103,6 +103,10 @@
 
         $(document).ready(function() {
 
+            // remove the loading panel
+            var rem = document.getElementById('alertBox');
+            rem.remove();
+
             //***** SEARCH PARAMETER PANEL *****//
 
             // get data from $searchParams from wos.php

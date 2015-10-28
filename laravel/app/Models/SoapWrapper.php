@@ -3,6 +3,8 @@
 use SoapClient;
 use Illuminate\Http\RedirectResponse;
 use Redirect;
+use View;
+use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class SoapWrapper {
 
@@ -104,7 +106,7 @@ class SoapWrapper {
     public function iterateWosSearch($submit) {
 
         // variable to store average time/record retrieval (based on calculations)
-        $avg = 0.08;
+        $avg = 0.15;
         // create a variable to store time for loading screen
         $timeDecimal = (round((($submit->len)*$avg), 2));
         // create an array to represent citation values to ignore, i.e. not interested
@@ -125,36 +127,41 @@ class SoapWrapper {
             $seconds = round($timeDecimal, 0);
         };
 
-        // panel to display records loading progress, js updates current record in #progressPanel
+        // display loading screen
         echo "<link href='//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/readable/bootstrap.min.css' rel='stylesheet'>
-              <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
               <style>
-              #alertBox {position:fixed !important;left: 35% !important;top: 35% !important;}
-              .glyphicon-info-sign {margin-left: 15px !important;}
+              #alertBox{position:fixed!important;left:35%!important;top:35%!important;}
+              .glyphicon-info-sign{margin-left:15px!important;}
               </style>
               <div class='panel panel-primary' id='alertBox'>
                   <div class='panel-heading'>
                       <h1 class='panel-title'>
-                      PROGRESS<span class='glyphicon glyphicon-info-sign'></span>
+                          PROGRESS<span class='glyphicon glyphicon-info-sign'></span>
                       </h1>
                   </div>
                   <div class='panel-body'>
                       <p id='progressPanel'></p>
-                      <p>The <strong>maximum</strong> estimated time for this query is " .$minutes. " minutes & " .$seconds. " seconds</p>
+                      <p>Found " .$this->len. " records for this query</p>
+                      <p>The <strong>maximum</strong> estimated time for this query is " .$minutes. " minutes and " .$seconds. " seconds</p>
                       <h2>
-                          <button type='submit' class='back btn btn-primary' onclick='window.location.href = '/';'>
+                          <button type='submit' class='back btn btn-primary' onclick='goBack()'>
                               <span class='glyphicon glyphicon-remove'></span>
                               <strong>Cancel</strong>
                           </button>
                       </h2>
                   </div>
                   </br>
-                  <div id='processing' hidden>
+                  <div id='processing'>
                       <h4 class='text-primary'>Processing retrieved data...</h4>
                       <div class='progress progress-striped active'>
-                          <div class='progress-bar' style='width: 100%''></div>
+                          <div class='progress-bar' style='width: 100%'></div>
                       </div>
                   </div>
+                  <script type='text/javascript'>
+                      function goBack() {
+                          window.location.href = '/laravel/public';
+                      };
+                  </script>
               </div>";
 
         ob_flush(); // flush anything from the header output buffer
@@ -187,15 +194,6 @@ class SoapWrapper {
 
                 // create authors array for this REC data
                 $authors = [];
-
-                echo "<script type='text/javascript'>
-                      $(document).ready(function() {
-                          document.getElementById('progressPanel').innerHTML = '<strong>Loading record " .$counter. "</strong>;
-                      });
-                      </script>";
-
-                ob_flush(); // flush anything from the header output buffer
-                flush(); // send contents so far to the browser
 
                 // authors
                 foreach($record->static_data->summary->names->name as $thisAuthor) {
@@ -238,15 +236,6 @@ class SoapWrapper {
             // increment for next record
             $counter+=100;
         };
-
-        // finished loading records, display 'processing' load bar
-        echo "<script type='text/javascript'>
-              $(document).ready(function() {
-                  $('#processing').show();
-              });
-              </script>";
-        ob_flush();
-        flush();
 
         // need to replace some charas to help remove duplicates
         for ($i = 0; $i < count($submit->records); $i++) {

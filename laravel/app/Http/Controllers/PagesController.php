@@ -27,6 +27,12 @@ class PagesController extends Controller {
 		return view('pages.home');
 	}
 
+	// method loading returns view 'loading' (resources/views/loading.blade.php)
+	// public function loading()
+	// {
+	// 	return view('pages.loading');
+	// }
+
 	// method about returns view 'about' (resources/views/about.blade.php)
 	public function about()
 	{

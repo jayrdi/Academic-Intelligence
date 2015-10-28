@@ -4,6 +4,9 @@
 // (app/Http/Controllers/PagesController.php)
 Route::get('/', 'PagesController@index');
 
+// perform GET request on 'loading' and call method 'loading' on the PagesController class
+// Route::post('loading', 'PagesController@loading');
+
 // perform GET request on 'about' and call method 'about' on the PagesController class
 Route::get('about', 'PagesController@about');
 
